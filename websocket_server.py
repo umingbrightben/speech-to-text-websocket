@@ -45,21 +45,21 @@ class Transcoder(object):
         Audio stream recognition and result parsing
         """
         #You can add speech contexts for better recognition
-        cap_speech_context = speech.types.SpeechContext(phrases=["Add your phrases here"])
+        cap_speech_context = speech.SpeechContext(phrases=["Add your phrases here"])
         client = speech.SpeechClient()
-        config = speech.types.RecognitionConfig(
+        config = speech.RecognitionConfig(
             encoding=self.encoding,
             sample_rate_hertz=self.rate,
             language_code=self.language,
             speech_contexts=[cap_speech_context,],
             model='command_and_search'
         )
-        streaming_config = types.StreamingRecognitionConfig(
+        streaming_config = speech.StreamingRecognitionConfig(
             config=config,
             interim_results=False,
             single_utterance=False)
         audio_generator = self.stream_generator()
-        requests = (types.StreamingRecognizeRequest(audio_content=content)
+        requests = (speech.StreamingRecognizeRequest(audio_content=content)
                     for content in audio_generator)
 
         responses = client.streaming_recognize(streaming_config, requests)
@@ -90,11 +90,7 @@ class Transcoder(object):
         """
         self.buff.put(data)
 
-
 async def audio_processor(websocket, path):
-    """
-    Collects audio from the stream, writes it to buffer and return the output of Google speech to text
-    """
     config = await websocket.recv()
     if not isinstance(config, str):
         print("ERROR, no config")

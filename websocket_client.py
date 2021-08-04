@@ -3,7 +3,7 @@ import asyncio
 import websockets
 import json
 import pyaudio
-from google.cloud.speech import enums
+from google.cloud import speech as speech
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -24,7 +24,7 @@ async def microphone_client():
             'ws://0.0.0.0:8787/') as websocket:
         await websocket.send(json.dumps({
             "rate": RATE,
-            "format": enums.RecognitionConfig.AudioEncoding.LINEAR16,
+            "format": speech.RecognitionConfig.AudioEncoding.LINEAR16,
             "language": 'en-IN'
         }))
         while True:
